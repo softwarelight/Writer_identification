@@ -1,0 +1,53 @@
+import copy
+import os
+env = Environment(ENV = os.environ,
+                  CXXFLAGS="-std=c++0x")
+libs = [ 'boost_thread-gcc44-mt-1_55', 'boost_system-gcc44-1_55', 
+        'atlas', 'boost_filesystem-gcc44-1_55', 'thrift',
+        'opencv_highgui', 'opencv_core', 'openblas',
+         'boost_filesystem-gcc44-1_55', 'freetype']
+thirdlib_root = '../../../thirdlib/'
+intedio_core = '../../../intedio_core/'
+
+inc_path = [
+        '../src/gen-cpp',
+        '../include',
+        '../vlfeat/vl',
+        thirdlib_root + 'opencv/opencv-2.4.3/build/include',
+        '/usr/local/include/boost-1_55',
+        '/usr/local/include/freetype2',
+        
+    ]
+
+target_name = 'RecoverDgrFile'
+src = [ './RecoverDgrFile.cpp' , '../src/FsHelpers.cpp']
+cpp_flags = ['-pthread', '-fPIC', '-fopenmp','-O2']
+
+lib_path = [
+        '.','../lib',
+        '../bin',
+        '../vlfeat/bin/glnxa64',
+        intedio_core + '/intedioCore/static_lib/linux/',
+        '/usr/cuda-6.5/lib64/',
+        '/usr/lib64/atlas/',
+]
+thirdlib_path='../../../thirdlib/'
+
+link_flags = copy.copy(cpp_flags) + ['-Wl,--rpath=.:lib:../lib:../bin/:../vlfeat/bin/glnxa64/:../lib/',]
+cpp_defines = ['-D__LINUX__',]
+
+program = env.Program(
+        target = target_name,
+        source = src,
+        LIBS = libs,
+        LIBPATH = lib_path,
+        CPPFLAGS = cpp_flags,
+        LINKFLAGS = link_flags,
+        CPPPATH = inc_path,
+        CPPDEFINES = cpp_defines,
+)
+
+
+
+
+
